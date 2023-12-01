@@ -1,9 +1,9 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			people: [],
-			planets: [],
-			starships: [],
+			people: [], // store["people"].find(...)
+			planets: [], // store["planets"].find(...)
+			starships: [],// store["starships"].find(...)
 			favorites: [],
 		},
 		actions: {

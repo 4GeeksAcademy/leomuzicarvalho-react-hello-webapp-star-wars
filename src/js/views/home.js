@@ -1,9 +1,11 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
+import { Link } from "react-router-dom";
 import "../../styles/home.css";
 
 export const Home = () => {
 	const { store, actions } = useContext(Context);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleInitialData = async () => {
 		await actions.getPeople();
@@ -18,17 +20,21 @@ export const Home = () => {
 	}
 
 	const handleAsyncCalls = async () => {
+		setIsLoading(true);
 		await handleInitialData();
 		await handleFetchDetails();
+		setIsLoading(false);
 	}
 
 	useEffect(() => {
-		handleAsyncCalls();
+		if (!store.people.length || !store.planets.length || !store.starships.length) {
+			handleAsyncCalls();
+		}
 	}, []);
 
 	console.log(store);
 
-	return (
+	return isLoading ? (<p>App's loading data from the API, please wait...</p>) : (
 		<div className="text-center mt-5">
 			<h1>Hello Starwars!</h1>
 			<div>
@@ -36,7 +42,7 @@ export const Home = () => {
 				{store.people.map((person) => (
 					<div key={person.uid}>
 						<p>{person.name}</p>
-						{person.details && person.details.properties && (<><p>Person's Mass: {person.details.properties.mass}</p><p>Person's Height: {person.details.properties.height}</p><p>Person's Gender: {person.details.properties.gender}</p></>)}
+						<Link to={`/information/people/${person.uid}`}><button className="btn btn-primary">Go person's details</button></Link>
 					</div>
 				))}
 			</div>
@@ -45,7 +51,7 @@ export const Home = () => {
 				{store.planets.map((planet) => (
 					<div key={planet.uid}>
 						<p>{planet.name}</p>
-						{planet.details && planet.details.properties && (<p>Planet's diameter: {planet.details.properties.diameter}</p>)}
+						<Link to={`/information/planets/${planet.uid}`}><button className="btn btn-primary">Go planet's details</button></Link>
 					</div>
 				))}
 			</div>
@@ -54,7 +60,7 @@ export const Home = () => {
 				{store.starships.map((starship) => (
 					<div key={starship.uid}>
 						<p>{starship.name}</p>
-						{starship.details && starship.details.properties && (<p>Starship's model: {starship.details.properties.model}</p>)}
+						<Link to={`/information/starships/${starship.uid}`}><button className="btn btn-primary">Go starship's details</button></Link>
 					</div>
 				))}
 			</div>
